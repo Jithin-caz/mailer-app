@@ -15,12 +15,12 @@ export default function Home() {
     setLoading(true);
     setStatus({ type: null, message: '' });
 
-    const formData = new FormData(e.currentTarget);
-    const data = {
-      to: formData.get('to'),
-      subject: formData.get('subject'),
-      message: formData.get('message'),
-    };
+    // const formData = new FormData(e.currentTarget);
+    // const data = {
+    //   to: formData.get('to'),
+    //   subject: formData.get('subject'),
+    //   message: formData.get('message'),
+    // };
 
     try {
       const response = await fetch('/api/sendMail', {
@@ -38,7 +38,9 @@ export default function Home() {
           message: 'Email sent successfully!',
         });
         (e.target as HTMLFormElement).reset();
+        alert("mail sending completed")
       } else {
+        alert("mail sending failed")
         throw new Error(result.error || 'Failed to send email');
       }
     } catch (error) {
@@ -46,6 +48,7 @@ export default function Home() {
         type: 'error',
         message: error instanceof Error ? error.message : 'An error occurred',
       });
+      alert("mail sending failed")
     } finally {
       setLoading(false);
     }
@@ -57,7 +60,7 @@ export default function Home() {
         <h1 className="text-2xl font-bold mb-6">Send Email</h1>
         
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
+          {/* <div>
             <label htmlFor="to" className="block mb-1">
               To:
             </label>
@@ -68,9 +71,9 @@ export default function Home() {
               required
               className="w-full p-2 border rounded"
             />
-          </div>
+          </div> */}
 
-          <div>
+          {/* <div>
             <label htmlFor="subject" className="block mb-1">
               Subject:
             </label>
@@ -81,9 +84,9 @@ export default function Home() {
               required
               className="w-full p-2 border rounded"
             />
-          </div>
+          </div> */}
 
-          <div>
+          {/* <div>
             <label htmlFor="message" className="block mb-1">
               Message:
             </label>
@@ -94,7 +97,7 @@ export default function Home() {
               rows={5}
               className="w-full p-2 border rounded"
             />
-          </div>
+          </div> */}
 
           <button
             type="submit"
@@ -107,7 +110,7 @@ export default function Home() {
           >
             {loading ? 'Sending...' : 'Send Email'}
           </button>
-          <img src="/pic.png" alt="" />
+          <img src="/pic.jpeg" alt="" />
         </form>
 
         {status.type && (

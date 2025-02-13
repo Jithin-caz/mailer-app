@@ -9,8 +9,8 @@ const transporter = nodemailer.createTransport({
   port: 465,
   secure: true,
   auth: {
-    user: 'jithinreji185@gmail.com',
-    pass:  'syth jxrf ezgx ucci'
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS
   }
 });
 
@@ -33,8 +33,8 @@ async function sendEmailWithRetry(mailOptions: any, maxRetries = 3) {
 
 export async function GET(request: Request) {
   try {
-    const subject = "MACE MUN Volunteering";
-    const excelFilePath = path.join(process.cwd(), 'public', 'sheet.xlsx');
+    const subject = "Second test mail for MACE MUN Volunteering.";
+    const excelFilePath = path.join(process.cwd(), 'public', 'sheet2.xlsx');
 
     const excelBuffer = fs.readFileSync(excelFilePath);
     const workbook = XLSX.read(excelBuffer);
@@ -56,22 +56,16 @@ export async function GET(request: Request) {
 
       if (email && typeof email === 'string' && email.includes('@')) {
         const personalizedMessage = `
-        Subject:Second test mail for MACE MUN Volunteering.
-        
         Dear ${volunteerName},
-        
         We are thrilled to have you on board as a volunteer for **MACE MUN**! Your dedication and enthusiasm are what will make this event a success, and we can't wait to work together to create an unforgettable experience.
         
         You have been assigned to the ${team} team. As a member of this team, you will play a key role in ensuring smooth operations, assisting delegates, and upholding the spirit of Model United Nations. This is a great opportunity to learn, network, and contribute to something truly impactful.
-        
         
         Stay tuned for more updates, and feel free to reach out if you have any questions. Let's make **MACE MUN** a grand success together!
         
         Looking forward to seeing you in action.
         
-        Best regards,  
-        Jithin
-        MACE MUN Team
+        Best regards,<br>Jithin<br>MACE MUN Team
         `;
 
         const mailOptions = {
@@ -79,7 +73,14 @@ export async function GET(request: Request) {
           to: email,
           subject,
           text: personalizedMessage,
-          html: `<p>${personalizedMessage.split('\n').join('<br><br>')}</p>`,
+          html: `<div style="line-height: 1.4; font-family: Arial, sans-serif;">
+      ${personalizedMessage
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .split('\n')
+        .filter(line => line.trim() !== '')
+        .map(line => `<p style="margin: 0.7em 0;">${line.trim()}</p>`)
+        .join('')}
+    </div>`,
         };
 
         try {
@@ -91,6 +92,7 @@ export async function GET(request: Request) {
           results.push(email);
         } catch (error) {
           console.error(`Failed to send email to ${email}:`, error);
+          //@ts-ignore
           errors.push({ email, error: error.message });
         }
       }
