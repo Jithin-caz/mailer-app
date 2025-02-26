@@ -110,7 +110,7 @@ export default function Home() {
           >
             {loading ? 'Sending...' : 'Send Email'}
           </button>
-          <img src="/pic.jpeg" alt="" />
+          <img src="/mun.png" alt="" />
         </form>
 
         {status.type && (
